@@ -10,15 +10,17 @@ use App\Models\Paket;
 use App\Models\Member;
 use App\Models\Instruktur;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class FrontendController extends Controller
 {
     public function index()
     {
-        
+       $user = Auth::user();
+       if($user){
+        return redirect()->route('admin.dashboard');
+       }
         return view('welcome');
-
-       
     }
     
     public function kelas()

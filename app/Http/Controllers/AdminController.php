@@ -50,9 +50,10 @@ return view('admin.dashboard', compact(
 ));
     }
 
+
     public function dashboardpengelola()
 {
-    // Total transaksi (dalam 30 hari terakhir)
+   
     $totalTransaksi = Pemesanan::where('created_at', '>=', Carbon::now()->subDays(30))
         ->sum('total_harga');
     
