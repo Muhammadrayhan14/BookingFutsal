@@ -37,37 +37,19 @@
             border-top: 1px solid #eee;
             margin: 15px 0;
         }
-        .section {
-            margin-bottom: 15px;
+        .vertical-details {
+            width: 60%;
+            margin: 0 auto;
+            margin-bottom: 20px;
         }
-        .section-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #ff6600;
-            margin-bottom: 10px;
-            padding-bottom: 3px;
-            border-bottom: 1px solid #ff6600;
-        }
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .info-item {
+        .detail-row {
             display: flex;
             justify-content: space-between;
-        }
-        .info-label {
-            font-weight: bold;
-            min-width: 120px;
-        }
-        .detail-item {
             margin-bottom: 8px;
         }
-        .detail-title {
+        .detail-label {
             font-weight: bold;
-            margin-bottom: 3px;
+            min-width: 120px;
         }
         .total-section {
             background-color: #f8f9fa;
@@ -110,91 +92,52 @@
     <div class="invoice-container">
         <div class="header">
             <div class="logo">ANAK RAWA FUTSAL</div>
-            <div class="invoice-title">FAKTUR PEMBAYARAN</div>
             <div class="company-info">Kampung Penyengat</div>
-            <div class="company-info">Telp: (021) 12345678</div>
+            <div class="divider"></div>
+            <div class="invoice-title">FAKTUR PEMBAYARAN</div>
         </div>
         
-        <div class="divider"></div>
-        
-        <div class="section">
-            <div class="section-title">Informasi Faktur</div>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Nomor Faktur</span>
-                    <span>{{ $nofaktur }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Tanggal</span>
-                    <span>{{ $tanggal }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Nama Pelanggan</span>
-                    <span>{{ $pembayaran->pemesanan->user->name }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Booking ID</span>
-                    <span>{{ $pembayaran->pemesanan->id }}</span>
-                </div>
+        <div class="vertical-details">
+            <div class="detail-row">
+                <span class="detail-label">No Faktur</span>
+                <span>{{ $nofaktur }}</span>
             </div>
-        </div>
-        
-        <div class="divider"></div>
-        
-        <div class="section">
-            <div class="section-title">Detail Booking</div>
-            <div class="detail-item">
-                <div class="detail-title">Lapangan</div>
-                <div>{{ $pembayaran->pemesanan->lapangan->nama_lapangan }}</div>
+            <div class="detail-row">
+                <span class="detail-label">Tanggal</span>
+                <span>{{ $tanggal }}</span>
             </div>
-            <div class="detail-item">
-                <div class="detail-title">Tanggal Booking</div>
-                <div>{{ date('d F Y', strtotime($pembayaran->pemesanan->tanggal)) }}</div>
+            <div class="detail-row">
+                <span class="detail-label">Nama</span>
+                <span>{{ $pembayaran->pemesanan->user->name }}</span>
             </div>
-            <div class="detail-item">
-                <div class="detail-title">Waktu</div>
-                <div>
-                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $pembayaran->pemesanan->jam_mulai)->format('H.i') }}
-                    - 
-                    {{ date('H:i', strtotime($pembayaran->pemesanan->jam_mulai) + ($pembayaran->pemesanan->lama * 3600)) }}
-                    ({{ $pembayaran->pemesanan->lama }} jam)
-                </div>
+            <div class="detail-row">
+                <span class="detail-label">Jam Mulai</span>
+                <span>{{ \Carbon\Carbon::createFromFormat('H:i:s', $pembayaran->pemesanan->jam_mulai)->format('H.i') }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Harga</span>
+                <span>Rp {{ number_format($pembayaran->pemesanan->harga, 0, ',', '.') }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Lama</span>
+                <span>{{ $pembayaran->pemesanan->lama }} jam</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">DP</span>
+                <span>Rp {{ number_format($pembayaran->dp, 0, ',', '.') }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Total</span>
+                <span>Rp {{ number_format($pembayaran->pemesanan->total_harga, 0, ',', '.') }}</span>
             </div>
         </div>
         
         <div class="divider"></div>
         
-        <div class="section">
-            <div class="section-title">Rincian Harga</div>
-            <div class="detail-item">
-                <div class="detail-title">Harga per Jam</div>
-                <div>Rp {{ number_format($pembayaran->pemesanan->harga, 0, ',', '.') }}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-title">Durasi</div>
-                <div>{{ $pembayaran->pemesanan->lama }} jam</div>
-            </div>
-        </div>
-        
-        <div class="total-section">
-            <div class="total-item">
-                <span>Total:</span>
-                <span class="text-success">Rp {{ number_format($pembayaran->pemesanan->total_harga, 0, ',', '.') }}</span>
-            </div>
-            <div class="total-item">
-                <span>DP Dibayar:</span>
-                <span class="text-primary">Rp {{ number_format($pembayaran->dp, 0, ',', '.') }}</span>
-            </div>
-            <div class="total-item grand-total">
-                <span>Sisa Pembayaran:</span>
-                <span class="text-danger">Rp {{ number_format($pembayaran->sisa_bayar, 0, ',', '.') }}</span>
-            </div>
-        </div>
+      
         
         <div class="footer">
-            <p>Terima kasih telah memilih ANAK RAWA FUTSAL</p>
-            <p>Silahkan Bawa Faktur Pembayaran ini untuk penulasan sisa pembayaran</p>
-          
+            TERIMA KASIH
         </div>
     </div>
 </body>
