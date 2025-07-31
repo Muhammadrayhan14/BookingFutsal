@@ -23,6 +23,11 @@
             <input type="file" class="form-control-file" id="gambar" name="gambar">
             <small class="form-text text-muted">Biarkan kosong jika tidak ingin mengubah gambar</small>
         </div>
+
+        <div class="form-group">
+            <label for="harga">Harga (Rp)</label>
+            <input type="number" class="form-control" id="harga" name="harga" value="{{ $lapangan->harga }}" required min="0">
+        </div>
         
         <div class="form-group">
             <label for="keterangan">Keterangan</label>

@@ -6,6 +6,8 @@ use App\Models\Pembayaran;
 use App\Models\Pemesanan;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Mail\PaymentNotification;
+use Illuminate\Support\Facades\Mail;
 
 class PembayaranController extends Controller
 {
@@ -15,6 +17,7 @@ class PembayaranController extends Controller
         return view('pembayaran.create', compact('pemesanan'));
     }
 
+   
     public function store(Request $request)
     {
         $request->validate([
@@ -96,6 +99,37 @@ public function updateStatus(Request $request, $id)
     $pemesanan = Pemesanan::findOrFail($id);
     $pemesanan->update(['status' => $request->status]);
 
+    // Hapus jika tidak perlu
+    if ($request->status == 'lunas') {
+        $pembayaran = $pemesanan->pembayaran;
+        if ($pembayaran) {
+            Mail::to($pemesanan->user->email)->send(new PaymentNotification($pembayaran, true));
+        }
+    }
+
     return back()->with('success', 'Status pemesanan berhasil diperbarui');
+}
+
+public function generatePelunasanInvoice($id)
+{
+    $pembayaran = Pembayaran::with('pemesanan.lapangan')->findOrFail($id);
+    
+    // Update sisa bayar menjadi 0 jika status lunas
+    if ($pembayaran->pemesanan->status == 'lunas') {
+        $pembayaran->update([
+            'sisa_bayar' => 0,
+            'dp' => $pembayaran->pemesanan->total_harga // DP diupdate ke total harga
+        ]);
+    }
+    
+    $data = [
+        'pembayaran' => $pembayaran,
+        'tanggal' => now()->format('d F Y'),
+        'nofaktur' => 'INV-PEL-' . str_pad($pembayaran->id, 6, '0', STR_PAD_LEFT),
+        'is_pelunasan' => true
+    ];
+    
+    $pdf = PDF::loadView('admin.pembayaran.faktur-pelunasan', $data);
+    return $pdf->download('faktur-pelunasan-' . $pembayaran->id . '.pdf');
 }
 }

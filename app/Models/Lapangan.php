@@ -16,6 +16,7 @@ class Lapangan extends Model
         'nama_lapangan',
         'gambar',
         'keterangan',
+        'harga',
     ];
 
     public function pemesanan()

@@ -134,7 +134,7 @@
         <div class="header-text">
             <h1>ANAK RAWA FUTSAL</h1>
             <p>KAMPUNG PENYENGAT</p>
-            <p>Telp 08122849372</p>
+        
         </div>
     </div>
     
@@ -143,8 +143,7 @@
     
     <!-- REPORT INFO -->
     <div class="report-info">
-        <p><strong>Admin:</strong> {{ $users->where('role', 'admin')->count() }} | 
-           <strong>Member:</strong> {{ $users->where('role', 'pelanggan')->count() }}</p>
+       
     </div>
     
     <!-- MAIN TABLE -->

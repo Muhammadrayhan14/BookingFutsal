@@ -106,11 +106,10 @@
 <body>
     <!-- HEADER SECTION -->
     <div class="header">
-      
         <div class="header-text">
             <h1>ANAK RAWA FUTSAL </h1>
             <p>KAMPUNG PENYENGAT</p>
-            <p>Telp 081261879415</p>
+          
         </div>
     </div>
     
@@ -122,7 +121,7 @@
     <!-- REPORT INFO -->
     <div class="report-info">
         <p><strong>Tahun:</strong> {{ $tahun }}</p>
-       
+     
     </div>
     
     <!-- MAIN TABLE -->
@@ -130,32 +129,26 @@
         <thead>
             <tr>
                 <th width="50%">Bulan</th>
-                <th width="20%">Jumlah Pemesanan</th>
+              
                 <th width="30%">Total Pendapatan</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($pemesanans as $pemesanan)
+            @foreach ($allMonthsData as $pemesanan)
             <tr>
                 <td>{{ \Carbon\Carbon::create()->month($pemesanan->bulan)->locale('id')->monthName }}</td>
-                <td class="text-center">{{ $pemesanan->jumlah_pemesanan }}</td>
+               
                 <td class="text-right">Rp {{ number_format($pemesanan->total_pendapatan, 0, ',', '.') }}</td>
             </tr>
-            @empty
-            <tr>
-                <td colspan="3" class="text-center">Tidak ada data pemesanan untuk tahun ini</td>
-            </tr>
-            @endforelse
+            @endforeach
         </tbody>
-        @if($pemesanans->count() > 0)
         <tfoot>
             <tr>
                 <th class="text-right">Total:</th>
-                <th class="text-center">{{ $totalPemesanan }}</th>
+               
                 <th class="text-right">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</th>
             </tr>
         </tfoot>
-        @endif
     </table>
     
     <!-- FOOTER SECTION -->

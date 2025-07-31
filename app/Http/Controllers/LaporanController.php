@@ -57,10 +57,7 @@ class LaporanController extends Controller
         $lapangans = Lapangan::orderBy('nama_lapangan')->get();
         return view('laporan.laporan_lapangan', compact('lapangans'));
     }
-
-    /**
-     * Export laporan lapangan ke PDF
-     */
+    
     public function laporanLapanganPDF()
     {
         $lapangans = Lapangan::orderBy('nama_lapangan')->get();
@@ -71,7 +68,7 @@ class LaporanController extends Controller
             'tanggal' => $tanggal,
             'total_lapangan' => $lapangans->count()
         ];
-
+    
         $pdf = Pdf::loadView('laporan.laporan_lapangan_pdf', $data)
                  ->setPaper('a4', 'portrait')
                  ->setOptions([
@@ -79,7 +76,7 @@ class LaporanController extends Controller
                      'isRemoteEnabled' => true,
                      'defaultFont' => 'Arial'
                  ]);
-
+    
         return $pdf->download('laporan-data-lapangan-' . now()->format('Ymd') . '.pdf');
     }
 
@@ -213,10 +210,11 @@ class LaporanController extends Controller
     public function laporanPemesananPertahun(Request $request)
     {
         $tahun = $request->input('tahun', date('Y'));
-        $pemesanans = collect();
+        $allMonthsData = collect();
         
         if ($request->filled('tahun')) {
-            $pemesanans = Pemesanan::select(
+            // Ambil data dari database
+            $dbData = Pemesanan::select(
                     DB::raw('MONTH(tanggal) as bulan'),
                     DB::raw('COUNT(id) as jumlah_pemesanan'),
                     DB::raw('SUM(total_harga) as total_pendapatan')
@@ -224,15 +222,24 @@ class LaporanController extends Controller
                 ->whereYear('tanggal', $tahun)
                 ->groupBy(DB::raw('MONTH(tanggal)'))
                 ->orderBy('bulan')
-                ->get();
+                ->get()
+                ->keyBy('bulan');
+            
+            // Buat data untuk semua bulan
+            $allMonthsData = collect(range(1, 12))->map(function ($month) use ($dbData) {
+                return $dbData->has($month) 
+                    ? $dbData->get($month) 
+                    : (object)[
+                        'bulan' => $month,
+                        'jumlah_pemesanan' => 0,
+                        'total_pendapatan' => 0
+                    ];
+            });
         }
             
-        return view('laporan.laporan_pemesanan_pertahun', compact('pemesanans', 'tahun'));
+        return view('laporan.laporan_pemesanan_pertahun', compact('allMonthsData', 'tahun'));
     }
-
-    /**
-     * Export laporan pemesanan pertahun ke PDF
-     */
+    
     public function laporanPemesananPertahunPDF(Request $request)
     {
         $request->validate([
@@ -241,7 +248,8 @@ class LaporanController extends Controller
         
         $tahun = $request->input('tahun');
         
-        $pemesanans = Pemesanan::select(
+        // Ambil data dari database
+        $dbData = Pemesanan::select(
                 DB::raw('MONTH(tanggal) as bulan'),
                 DB::raw('COUNT(id) as jumlah_pemesanan'),
                 DB::raw('SUM(total_harga) as total_pendapatan')
@@ -249,19 +257,31 @@ class LaporanController extends Controller
             ->whereYear('tanggal', $tahun)
             ->groupBy(DB::raw('MONTH(tanggal)'))
             ->orderBy('bulan')
-            ->get();
+            ->get()
+            ->keyBy('bulan');
+        
+        // Buat data untuk semua bulan
+        $allMonthsData = collect(range(1, 12))->map(function ($month) use ($dbData) {
+            return $dbData->has($month) 
+                ? $dbData->get($month) 
+                : (object)[
+                    'bulan' => $month,
+                    'jumlah_pemesanan' => 0,
+                    'total_pendapatan' => 0
+                ];
+        });
             
-        $totalPendapatan = $pemesanans->sum('total_pendapatan');
-        $totalPemesanan = $pemesanans->sum('jumlah_pemesanan');
+        $totalPendapatan = $allMonthsData->sum('total_pendapatan');
+        $totalPemesanan = $allMonthsData->sum('jumlah_pemesanan');
         
         $data = [
-            'pemesanans' => $pemesanans,
+            'allMonthsData' => $allMonthsData,
             'tahun' => $tahun,
             'totalPendapatan' => $totalPendapatan,
             'totalPemesanan' => $totalPemesanan,
             'tanggalCetak' => Carbon::now()->format('d F Y')
         ];
-
+    
         $pdf = Pdf::loadView('laporan.laporan_pemesanan_pertahun_pdf', $data)
                  ->setPaper('a4', 'portrait')
                  ->setOptions([
@@ -269,7 +289,7 @@ class LaporanController extends Controller
                      'isRemoteEnabled' => true,
                      'defaultFont' => 'Arial'
                  ]);
-
+    
         return $pdf->download('laporan-pemesanan-pertahun-' . $tahun . '.pdf');
     }
 
@@ -393,23 +413,33 @@ class LaporanController extends Controller
     public function laporanPembayaranPertahun(Request $request)
     {
         $tahun = $request->input('tahun', date('Y'));
-        $pembayarans = collect();
+        $allMonthsData = collect();
         
         if ($request->filled('tahun')) {
-            $pembayarans = Pembayaran::select(
-                    'pembayaran.id', // Specify which table's id you want
+            // Ambil data dari database
+            $dbData = Pembayaran::select(
                     DB::raw('MONTH(pembayaran.created_at) as bulan'),
                     DB::raw('SUM(pemesanan.total_harga) as total')
                 )
                 ->join('pemesanan', 'pembayaran.pemesanan_id', '=', 'pemesanan.id')
                 ->whereYear('pembayaran.created_at', $tahun)
-                ->groupBy('pembayaran.id', DB::raw('MONTH(pembayaran.created_at)')) // Also specify here
+                ->groupBy(DB::raw('MONTH(pembayaran.created_at)'))
                 ->orderBy('bulan')
-                ->orderBy('pembayaran.id') // And here
-                ->get();
+                ->get()
+                ->keyBy('bulan');
+            
+            // Buat data untuk semua bulan
+            $allMonthsData = collect(range(1, 12))->map(function ($month) use ($dbData) {
+                return $dbData->has($month) 
+                    ? $dbData->get($month) 
+                    : (object)[
+                        'bulan' => $month,
+                        'total' => 0
+                    ];
+            });
         }
             
-        return view('laporan.laporan_pembayaran_pertahun', compact('pembayarans', 'tahun'));
+        return view('laporan.laporan_pembayaran_pertahun', compact('allMonthsData', 'tahun'));
     }
     
     public function exportPembayaranPertahunPDF(Request $request)
@@ -420,22 +450,32 @@ class LaporanController extends Controller
         
         $tahun = $request->input('tahun');
         
-        $pembayarans = Pembayaran::select(
-                'pembayaran.id', // Specify which table's id you want
+        // Ambil data dari database
+        $dbData = Pembayaran::select(
                 DB::raw('MONTH(pembayaran.created_at) as bulan'),
                 DB::raw('SUM(pemesanan.total_harga) as total')
             )
             ->join('pemesanan', 'pembayaran.pemesanan_id', '=', 'pemesanan.id')
             ->whereYear('pembayaran.created_at', $tahun)
-            ->groupBy('pembayaran.id', DB::raw('MONTH(pembayaran.created_at)')) // Also specify here
+            ->groupBy(DB::raw('MONTH(pembayaran.created_at)'))
             ->orderBy('bulan')
-            ->orderBy('pembayaran.id') // And here
-            ->get();
+            ->get()
+            ->keyBy('bulan');
+        
+        // Buat data untuk semua bulan
+        $allMonthsData = collect(range(1, 12))->map(function ($month) use ($dbData) {
+            return $dbData->has($month) 
+                ? $dbData->get($month) 
+                : (object)[
+                    'bulan' => $month,
+                    'total' => 0
+                ];
+        });
             
         $data = [
-            'pembayarans' => $pembayarans,
+            'allMonthsData' => $allMonthsData,
             'tahun' => $tahun,
-            'totalPendapatan' => $pembayarans->sum('total'),
+            'totalPendapatan' => $allMonthsData->sum('total'),
             'tanggalCetak' => Carbon::now()->format('d F Y')
         ];
     

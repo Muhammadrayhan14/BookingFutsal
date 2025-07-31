@@ -21,19 +21,7 @@
             padding-bottom: 10px;
             border-bottom: 2px solid #333;
         }
-        .logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 2px solid #333;
-            background-color: #f1f1f1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            overflow: hidden;
-            float: left;
-        }
+       
         .header-text {
             flex-grow: 1;
             text-align: center;
@@ -118,13 +106,11 @@
 <body>
     <!-- HEADER SECTION -->
     <div class="header">
-        <div class="logo">
-            <img src="frontend/img/logo.png" style="width:100%; height:100%; object-fit:cover; background-color: #000000;">
-        </div>
+      
         <div class="header-text">
-            <h1>ANAK RAWA FUTSAL KAMPUNG PENYENGAT</h1>
-            <p>Jl. Prof. Dr. Hamka No.156D, Air Tawar Bar., Kec. Koto Tangah, Kota Padang</p>
-            <p>Telp 081261879415</p>
+            <h1>ANAK RAWA FUTSAL </h1>
+            <p>KAMPUNG PENYENGAT</p>
+ 
         </div>
     </div>
     
@@ -136,7 +122,7 @@
     <!-- REPORT INFO -->
     <div class="report-info">
         <p><strong>Periode:</strong> {{ $startDate }} s/d {{ $endDate }}</p>
-        <p><strong>Tanggal Cetak:</strong> {{ $tanggalCetak }}</p>
+    
     </div>
     
     <!-- MAIN TABLE -->
@@ -144,7 +130,7 @@
         <thead>
             <tr>
                 <th width="15%">ID Pembayaran</th>
-                <th width="30%">Nama Pelanggan</th>
+                <th width="30%">Nama </th>
                 <th width="20%">Harga</th>
                 <th width="15%">DP</th>
                 <th width="20%">Total</th>
@@ -165,16 +151,7 @@
             </tr>
             @endforelse
         </tbody>
-        @if($pembayarans->count() > 0)
-        <tfoot>
-            <tr>
-                <th colspan="2" class="text-right">Total:</th>
-                <th class="text-right">Rp {{ number_format($pembayarans->sum(function($p) { return $p->pemesanan->harga; }), 0, ',', '.') }}</th>
-                <th class="text-right">Rp {{ number_format($totalDP, 0, ',', '.') }}</th>
-                <th class="text-right">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</th>
-            </tr>
-        </tfoot>
-        @endif
+    
     </table>
     
     <!-- FOOTER SECTION -->

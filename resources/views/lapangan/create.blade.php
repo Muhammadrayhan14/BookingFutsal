@@ -16,6 +16,10 @@
             <label for="gambar">Gambar</label>
             <input type="file" class="form-control-file" id="gambar" name="gambar">
         </div>
+        <div class="form-group">
+            <label for="harga">Harga (Rp)</label>
+            <input type="number" class="form-control" id="harga" name="harga" required min="0">
+        </div>
         
         <div class="form-group">
             <label for="keterangan">Keterangan</label>

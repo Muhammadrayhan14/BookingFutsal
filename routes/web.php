@@ -41,12 +41,8 @@ Route::get('/paket-publik', [FrontendController::class, 'paket'])->name('paket')
 Route::get('/instruktur', [FrontendController::class, 'instruktur'])->name('instruktur');
 Route::get('/fasilitas', [FrontendController::class, 'fasilitas'])->name('fasilitas');
 
-Route::get('/tes-email', function () {
-    $member = \App\Models\Member::first();
-    $member->email = 'mhdrayhan1405@gmail.com'; // email asli kamu di sini
-    Mail::to($member->email)->send(new PaketHampirHabisMail($member));
-    return 'Tes email terkirim ke: ' . $member->email;
-});
+
+
 // ===========================
 // Halaman Backend (Setelah Login)
 
@@ -61,7 +57,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:admin')->group(function () {
        
         
-
+        Route::get('/admin/pembayaran/faktur-pelunasan/{id}', [PembayaranController::class, 'generatePelunasanInvoice'])
+        ->name('admin.pembayaran.faktur-pelunasan');
 
         Route::get('/admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
@@ -70,6 +67,8 @@ Route::middleware(['auth'])->group(function () {
          
         Route::post('/pembayaran/update-status/{id}', [PembayaranController::class, 'updateStatus'])
          ->name('admin.pembayaran.update-status');
+
+         Route::get('/pembayaran/invoice/{id}', [PembayaranController::class, 'generateInvoice'])->name('pembayaran.invoice');
 
         Route::get('/lapangan-admin', [LapanganController::class, 'index'])->name('lapangan.index');
         Route::get('/lapangan-admin/create', [LapanganController::class, 'create'])->name('lapangan.create');

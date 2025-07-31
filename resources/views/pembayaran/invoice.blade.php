@@ -154,7 +154,8 @@
             <div class="detail-item">
                 <div class="detail-title">Waktu</div>
                 <div>
-                    {{ $pembayaran->pemesanan->jam_mulai }} - 
+                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $pembayaran->pemesanan->jam_mulai)->format('H.i') }}
+                    - 
                     {{ date('H:i', strtotime($pembayaran->pemesanan->jam_mulai) + ($pembayaran->pemesanan->lama * 3600)) }}
                     ({{ $pembayaran->pemesanan->lama }} jam)
                 </div>

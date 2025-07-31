@@ -55,36 +55,26 @@
                 <table class="table table-hover" width="100%" cellspacing="0" style="border-radius: 10px; overflow: hidden;">
                     <thead style="background: linear-gradient(to right, #ff9800, #ff8c00); color: white;">
                         <tr>
-                            <th style="width:30%; border-top-left-radius: 10px;">ID Pembayaran</th>
-                            <th style="width:30%">Bulan</th>
-                            <th style="width:40%; border-top-right-radius: 10px;">Total</th>
+                            <th style="border-top-left-radius: 10px;">Bulan</th>
+                            <th style="border-top-right-radius: 10px;">Total Pembayaran</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($pembayarans as $pembayaran)
+                        @foreach($allMonthsData as $pembayaran)
                         <tr style="background-color: {{ $loop->odd ? '#fff' : '#ffeedb' }};">
-                            <td>{{ $pembayaran->id }}</td>
                             <td>{{ \Carbon\Carbon::create()->month($pembayaran->bulan)->locale('id')->monthName }}</td>
                             <td class="text-right" style="font-weight: bold; color: #e65100;">
                                 Rp {{ number_format($pembayaran->total, 0, ',', '.') }}
                             </td>
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="text-center py-4" style="background-color: #ffeedb;">
-                                <i class="fas fa-info-circle mr-2"></i> Tidak ada data pembayaran untuk tahun yang dipilih
-                            </td>
-                        </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
-                    @if($pembayarans->count() > 0)
                     <tfoot>
                         <tr style="background-color: #ffcc80;">
-                            <th colspan="2" class="text-right">Total:</th>
-                            <th class="text-right" style="color: #e65100;">Rp {{ number_format($pembayarans->sum('total'), 0, ',', '.') }}</th>
+                            <th class="text-right">Total:</th>
+                            <th class="text-right" style="color: #e65100;">Rp {{ number_format($allMonthsData->sum('total'), 0, ',', '.') }}</th>
                         </tr>
                     </tfoot>
-                    @endif
                 </table>
             </div>
             @endif

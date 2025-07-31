@@ -57,7 +57,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($pemesanans as $pemesanan)
+                        @foreach($allMonthsData as $pemesanan)
                         <tr style="background-color: {{ $loop->odd ? '#fff' : '#ffeedb' }};">
                             <td>{{ \Carbon\Carbon::create()->month($pemesanan->bulan)->locale('id')->monthName }}</td>
                             <td class="text-center" style="font-weight: 500;">{{ $pemesanan->jumlah_pemesanan }}</td>
@@ -65,23 +65,15 @@
                                 Rp {{ number_format($pemesanan->total_pendapatan, 0, ',', '.') }}
                             </td>
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="text-center py-4" style="background-color: #ffeedb;">
-                                <i class="fas fa-info-circle mr-2"></i> Tidak ada data pemesanan untuk tahun yang dipilih
-                            </td>
-                        </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
-                    @if($pemesanans->count() > 0)
                     <tfoot>
                         <tr style="background-color: #ffcc80;">
                             <th class="text-right">Total:</th>
-                            <th class="text-center">{{ $pemesanans->sum('jumlah_pemesanan') }}</th>
-                            <th class="text-right" style="color: #e65100;">Rp {{ number_format($pemesanans->sum('total_pendapatan'), 0, ',', '.') }}</th>
+                            <th class="text-center">{{ $allMonthsData->sum('jumlah_pemesanan') }}</th>
+                            <th class="text-right" style="color: #e65100;">Rp {{ number_format($allMonthsData->sum('total_pendapatan'), 0, ',', '.') }}</th>
                         </tr>
                     </tfoot>
-                    @endif
                 </table>
             </div>
             @endif

@@ -109,7 +109,7 @@
         <div class="header-text">
             <h1>ANAK RAWA FUTSAL</h1>
             <p>KAMPUNG PENYENGAT</p>
-            <p>Telp 081261879415</p>
+       
         </div>
     </div>
     
@@ -120,8 +120,9 @@
     
     <!-- REPORT INFO -->
     <div class="report-info">
-        <p><strong>Bulan:</strong> {{ \Carbon\Carbon::create()->month($bulan)->locale('id')->monthName }} {{ $tahun }}</p>
-      
+        <p><strong>Bulan:</strong> {{ \Carbon\Carbon::create()->month($bulan)->locale('id')->monthName }} 
+            <strong>Tahun:</strong> {{ date('Y') }}</p>
+    
     </div>
     
     <!-- MAIN TABLE -->
@@ -129,8 +130,9 @@
         <thead>
             <tr>
                 <th width="15%">ID Pembayaran</th>
-                <th width="25%">Nama Pelanggan</th>
+                <th width="25%">Nama </th>
                 <th width="20%">Tanggal</th>
+                <th width="20%">Harga</th>
                 <th width="20%">DP</th>
                 <th width="20%">Total</th>
             </tr>
@@ -141,6 +143,7 @@
                 <td class="text-center">{{ $pembayaran->id }}</td>
                 <td>{{ $pembayaran->pemesanan->user->name }}</td>
                 <td class="text-center">{{ \Carbon\Carbon::parse($pembayaran->created_at)->format('d/m/Y') }}</td>
+                <td class="text-right">Rp {{ number_format($pembayaran->pemesanan->harga, 0, ',', '.') }}</td>
                 <td class="text-right">Rp {{ number_format($pembayaran->dp, 0, ',', '.') }}</td>
                 <td class="text-right">Rp {{ number_format($pembayaran->pemesanan->total_harga, 0, ',', '.') }}</td>
             </tr>
@@ -150,15 +153,7 @@
             </tr>
             @endforelse
         </tbody>
-        @if($pembayarans->count() > 0)
-        <tfoot>
-            <tr>
-                <th colspan="3" class="text-right">Total:</th>
-                <th class="text-right">Rp {{ number_format($pembayarans->sum('dp'), 0, ',', '.') }}</th>
-                <th class="text-right">Rp {{ number_format($pembayarans->sum(function($p) { return $p->pemesanan->total_harga; }), 0, ',', '.') }}</th>
-            </tr>
-        </tfoot>
-        @endif
+       
     </table>
     
     <!-- FOOTER SECTION -->

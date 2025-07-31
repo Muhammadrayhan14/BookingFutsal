@@ -24,7 +24,8 @@ class LapanganController extends Controller
         $request->validate([
             'nama_lapangan' => 'required|string|max:255',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'keterangan' => 'nullable|string',
+            'keterangan' => 'nullable|string',    
+            'harga' => 'required|numeric|min:0',  
         ]);
 
         $data = $request->all();
@@ -56,6 +57,7 @@ class LapanganController extends Controller
             'nama_lapangan' => 'required|string|max:255',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'keterangan' => 'nullable|string',
+            'harga' => 'required|numeric|min:0',
         ]);
 
         $lapangan = Lapangan::findOrFail($id);

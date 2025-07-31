@@ -117,7 +117,7 @@
         <div class="header-text">
             <h1>ANAK RAWA FUTSAL </h1>
             <p>KAMPUNG PENYENGAT</p>
-            <p>Telp 081261879415</p>
+  
         </div>
     </div>
     
@@ -128,7 +128,7 @@
     
     <!-- REPORT INFO -->
     <div class="report-info">
-        <p><strong>Periode:</strong> {{ $startDate }} s/d {{ $endDate }}</p>
+        <p><strong>Tanggal:</strong> {{ $startDate }} s/d {{ $endDate }}</p>
       
     </div>
     

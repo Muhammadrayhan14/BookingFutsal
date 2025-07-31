@@ -22,7 +22,7 @@ class PemesananController extends Controller
             'tanggal' => 'required|date',
             'jam_mulai' => 'required|date_format:H:i',
             'lama' => 'required|integer|min:1',
-            'harga' => 'required|numeric|min:0',
+          
         ]);
     
         // Hitung jam selesai
@@ -55,19 +55,18 @@ class PemesananController extends Controller
                 continue;
             }
         }
+        $lapangan = Lapangan::findOrFail($request->lapangan_id);
+     
     
-        // Hitung total harga
-        $total_harga = $request->harga * $request->lama;
-    
-        // Simpan pemesanan
+ 
         $pemesanan = Pemesanan::create([
             'user_id' => auth()->id(),
             'lapangan_id' => $request->lapangan_id,
             'tanggal' => $request->tanggal,
             'jam_mulai' => $request->jam_mulai,
             'lama' => $request->lama,
-            'harga' => $request->harga,
-            'total_harga' => $total_harga,
+            'harga' => $lapangan->harga,
+            'total_harga' => $lapangan->harga * $request->lama,
             'status' => 'belum selesai',
         ]);
     

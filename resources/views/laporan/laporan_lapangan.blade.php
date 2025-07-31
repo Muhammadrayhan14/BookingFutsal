@@ -21,7 +21,10 @@
                     <thead style="background: linear-gradient(to right, #ff9800, #ff8c00); color: white;">
                         <tr>
                             <th style="border-top-left-radius: 10px;">No</th>
+                            <th>ID</th>
                             <th>Nama Lapangan</th>
+                            <th>Harga</th>
+                            <th>Gambar</th>
                             <th>Keterangan</th>
                             <th style="border-top-right-radius: 10px;">Jumlah Pemesanan</th>
                         </tr>
@@ -32,8 +35,17 @@
                         @forelse($lapangans as $index => $lapangan)
                         <tr style="background-color: {{ $loop->odd ? '#fff' : '#ffeedb' }};">
                             <td>{{ $index + 1 }}</td>
+                            <td>{{ $lapangan->id }}</td>
                             <td>
                                 <strong>{{ $lapangan->nama_lapangan }}</strong>
+                            </td>
+                            <td>Rp {{ number_format($lapangan->harga, 0, ',', '.') }}</td>
+                            <td>
+                                @if($lapangan->gambar)
+                                    <img src="{{ asset('storage/' . $lapangan->gambar) }}" alt="{{ $lapangan->nama_lapangan }}" style="max-width: 100px; max-height: 60px;">
+                                @else
+                                    -
+                                @endif
                             </td>
                             <td>{{ $lapangan->keterangan ?? '-' }}</td>
                             <td>
@@ -44,7 +56,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center py-4" style="background-color: #ffeedb;">
+                            <td colspan="7" class="text-center py-4" style="background-color: #ffeedb;">
                                 <i class="fas fa-info-circle mr-2"></i> Tidak ada data lapangan
                             </td>
                         </tr>

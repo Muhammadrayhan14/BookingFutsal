@@ -27,7 +27,7 @@ class MemberController extends Controller
     }
 
 
-  // app/Http/Controllers/MemberController.php
+ 
   public function dashboardMember(Request $request)
   {
       $tanggal = $request->input('tanggal', date('Y-m-d'));

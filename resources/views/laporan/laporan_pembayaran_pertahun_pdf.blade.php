@@ -68,8 +68,8 @@
 <body>
     <div class="header">
         <div class="header-text">
-            <h1>ANAK RAWA FUTSAL KAMPUNG PENYENGAT</h1>
-            <p>Jl. Prof. Dr. Hamka No.156D, Air Tawar Bar., Kec. Koto Tangah, Kota Padang</p>
+            <h1>ANAK RAWA FUTSAL </h1>
+            <h1>KAMPUNG PENYENGAT</h1>
         </div>
     </div>
     
@@ -77,38 +77,25 @@
     
     <div class="report-info">
         <p><strong>Tahun:</strong> {{ $tahun }}</p>
-      
+       
     </div>
     
     <table>
         <thead>
             <tr>
-                <th width="20%">ID Pembayaran</th>
-                <th width="40%">Bulan</th>
-                <th width="40%">Total</th>
+                <th width="60%">Bulan</th>
+                <th width="40%">Total Pembayaran</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($pembayarans as $pembayaran)
+            @foreach ($allMonthsData as $pembayaran)
             <tr>
-                <td>{{ $pembayaran->id }}</td>
                 <td>{{ \Carbon\Carbon::create()->month($pembayaran->bulan)->locale('id')->monthName }}</td>
                 <td class="text-right">Rp {{ number_format($pembayaran->total, 0, ',', '.') }}</td>
             </tr>
-            @empty
-            <tr>
-                <td colspan="3" class="text-center">Tidak ada data pembayaran untuk tahun ini</td>
-            </tr>
-            @endforelse
+            @endforeach
         </tbody>
-        @if($pembayarans->count() > 0)
-        <tfoot>
-            <tr>
-                <th colspan="2" class="text-right">Total:</th>
-                <th class="text-right">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</th>
-            </tr>
-        </tfoot>
-        @endif
+       
     </table>
     
     <div class="footer">

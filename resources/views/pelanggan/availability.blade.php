@@ -62,7 +62,10 @@
                 <div>
                     <h5 class="mb-0 fw-bold">{{ $lapangan->nama_lapangan }}</h5>
                     <p class="mb-0 small text-muted">{{ $lapangan->keterangan }}</p>
+                    <h6 class="mb-0  text-muted">Harga :</h6>
+                    <h6 class="mb-0 small text-danger">Rp {{ number_format($lapangan->harga, 0, ',', '.') }}</h6>
                 </div>
+                
             </div>
             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2">
              
@@ -159,7 +162,8 @@
                             @foreach($bookings as $booking)
                             <tr>
                                 <td>
-                                    <span class="fw-bold">{{ $booking->jam_mulai }}</span> - 
+                                    <span class="fw-bold">{{ \Carbon\Carbon::createFromFormat('H:i:s', $booking->jam_mulai)->format('H.i') }}</span>
+                                    - 
                                     <span class="fw-bold">{{ \Carbon\Carbon::parse($booking->jam_mulai)->addHours($booking->lama)->format('H:i') }}</span>
                                 </td>
                                 <td>{{ $booking->lama }} jam</td>

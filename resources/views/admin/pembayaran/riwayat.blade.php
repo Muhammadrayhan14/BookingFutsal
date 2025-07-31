@@ -70,7 +70,7 @@
                                 <div class="d-flex flex-column">
                                     <span class="fw-bold">{{ date('d M', strtotime($pembayaran->pemesanan->tanggal)) }}</span>
                                     <small class="text-muted">
-                                        {{ $pembayaran->pemesanan->jam_mulai }} - {{ date('H:i', strtotime($pembayaran->pemesanan->jam_mulai) + ($pembayaran->pemesanan->lama * 3600)) }}
+                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $pembayaran->pemesanan->jam_mulai)->format('H.i') }} - {{ date('H:i', strtotime($pembayaran->pemesanan->jam_mulai) + ($pembayaran->pemesanan->lama * 3600)) }}
                                     </small>
                                 </div>
                             </td>
@@ -78,14 +78,20 @@
                             <td class="text-end text-primary fw-bold">Rp{{ number_format($pembayaran->dp, 0, ',', '.') }}</td>
                             <td class="text-end text-danger fw-bold">Rp{{ number_format($pembayaran->sisa_bayar, 0, ',', '.') }}</td>
                             <td>
-                                <form action="{{ route('admin.pembayaran.update-status', $pembayaran->pemesanan->id) }}" method="POST">
+                                <form action="{{ route('admin.pembayaran.update-status', $pembayaran->pemesanan->id) }}" method="POST" data-pembayaran-id="{{ $pembayaran->id }}">
                                     @csrf
-                                    <select name="status" class="form-select form-select-sm border-0 shadow-sm" onchange="this.form.submit()" style="min-width: 120px;">
+                                    <select name="status" class="form-select form-select-sm border-0 shadow-sm" style="min-width: 120px;">
                                         <option value="dp" {{ $pembayaran->pemesanan->status == 'dp' ? 'selected' : '' }}>Dp</option>
                                         <option value="lunas" {{ $pembayaran->pemesanan->status == 'lunas' ? 'selected' : '' }}>Lunas</option>
-                                        
                                     </select>
                                 </form>
+                                
+                                @if($pembayaran->pemesanan->status == 'lunas')
+                                    <a href="{{ route('admin.pembayaran.faktur-pelunasan', $pembayaran->id) }}" 
+                                       class="btn btn-sm btn-success mt-2 w-100">
+                                       <i class="fas fa-file-invoice"></i> Faktur Pelunasan
+                                    </a>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
@@ -168,7 +174,7 @@
 
 <script>
     $(document).ready(function() {
-        $('#transaksiTable').DataTable({
+        var table = $('#transaksiTable').DataTable({
             dom: '<"row"<"col-md-6"B><"col-md-6"f>>rt<"row"<"col-md-6"l><"col-md-6"p>>',
             buttons: [
                 {
@@ -207,11 +213,47 @@
                 }
             },
             responsive: true,
-            scrollX: false, // Pastikan scrollX dimatikan
-            autoWidth: false, // Nonaktifkan autoWidth
+            scrollX: false,
+            autoWidth: false,
             order: [[1, 'asc']],
             pageLength: 10,
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"]]
+        });
+
+        // Tangkap event perubahan status
+        $(document).on('change', 'select[name="status"]', function() {
+            var form = $(this).closest('form');
+            var row = $(this).closest('tr');
+            var totalHarga = parseFloat(row.find('td:nth-child(6)').text().replace('Rp', '').replace(/\./g, ''));
+            var dpCell = row.find('td:nth-child(7)');
+            var sisaCell = row.find('td:nth-child(8)');
+            var status = $(this).val();
+
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: form.serialize(),
+                success: function(response) {
+                    if (status === 'lunas') {
+                        // Update tampilan tanpa reload
+                        dpCell.text('Rp' + totalHarga.toLocaleString('id-ID'));
+                        sisaCell.text('Rp0').removeClass('text-danger').addClass('text-success');
+                        
+                        // Tambahkan tombol faktur pelunasan
+                        form.after('<a href="/admin/pembayaran/faktur-pelunasan/' + 
+                            row.find('form').data('pembayaran-id') + 
+                            '" class="btn btn-sm btn-success mt-2 w-100"><i class="fas fa-file-invoice"></i> Faktur Pelunasan</a>');
+                    }
+                    
+                    // Tampilkan pesan sukses
+                    if (response.success) {
+                        alert(response.success);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Terjadi kesalahan. Silakan coba lagi.');
+                }
+            });
         });
     });
 </script>

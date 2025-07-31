@@ -30,6 +30,7 @@
                             <th width="5%">No</th>
                             <th>Nama Lapangan</th>
                             <th width="15%">Gambar</th>
+                            <th>Harga</th>
                             <th>Keterangan</th>
                             <th width="20%">Aksi</th>
                         </tr>
@@ -47,6 +48,7 @@
                                     <span class="badge badge-secondary">No Image</span>
                                 @endif
                             </td>
+                            <td>Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
                             <td>{{ $item->keterangan ?? '-' }}</td>
                             <td>
                                 <div class="btn-group" role="group">

@@ -118,7 +118,7 @@
         border-radius: 10px;
     }
     .btn-light {
-        background-color: #b55656;
+        background-color: #fbab00;
         border: none;
         border-radius: 10px;
         transition: all 0.3s;

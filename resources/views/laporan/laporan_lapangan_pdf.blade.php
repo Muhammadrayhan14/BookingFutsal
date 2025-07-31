@@ -87,6 +87,12 @@
             text-align: right;
         }
         
+        /* IMAGE STYLES */
+        .lapangan-image {
+            max-width: 60px;
+            max-height: 40px;
+        }
+        
         /* FOOTER STYLES */
         .footer {
             margin-top: 30px;
@@ -113,11 +119,10 @@
 <body>
     <!-- HEADER SECTION -->
     <div class="header">
-       
         <div class="header-text">
             <h1>ANAK RAWA FUTSAL </h1>
             <p>KAMPUNG PENYENGAT</p>
-            <p>Telp 081261879415</p>
+          
         </div>
     </div>
     
@@ -126,31 +131,37 @@
     
     <!-- REPORT INFO -->
     <div class="report-info">
-  
-   
+        <p>Tanggal: {{ $tanggal }}</p>
+      
     </div>
     
     <!-- MAIN TABLE -->
     <table>
         <thead>
             <tr>
-                <th width="5%">No</th>
-                <th width="35%">Nama Lapangan</th>
-                <th width="45%">Keterangan</th>
-                <th width="15%">Jumlah Pemesanan</th>
+               
+                <th width="10%">ID Lapangan</th>
+                <th width="20%">Nama Lapangan</th>
+                <th width="15%">Harga</th>
+                <th width="15%">Gambar</th>
+                <th width="40%">Keterangan</th>
+               
             </tr>
         </thead>
         <tbody>
             @forelse ($lapangans as $i => $lapangan)
             <tr>
                 <td class="text-center">{{ $i + 1 }}</td>
+                <td class="text-center">{{ $lapangan->id }}</td>
                 <td>{{ $lapangan->nama_lapangan }}</td>
+                <td class="text-right">Rp {{ number_format($lapangan->harga, 0, ',', '.') }}</td>
+               
                 <td>{{ $lapangan->keterangan ?? '-' }}</td>
-                <td class="text-center">{{ $lapangan->pemesanan->count() }}</td>
+               
             </tr>
             @empty
             <tr>
-                <td colspan="4" class="no-data">Tidak ada data lapangan</td>
+                <td colspan="7" class="no-data">Tidak ada data lapangan</td>
             </tr>
             @endforelse
         </tbody>
