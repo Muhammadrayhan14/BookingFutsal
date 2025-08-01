@@ -115,7 +115,7 @@
     
     <!-- REPORT TITLE -->
     <h3 class="text-center" style="margin: 0 0 20px 0; font-size: 16px; color: #333; text-transform: uppercase;">
-        LAPORAN PEMBAYARAN BULANAN
+        LAPORAN PEMBAYARAN PERBULAN
     </h3>
     
     <!-- REPORT INFO -->
@@ -133,7 +133,7 @@
                 <th width="25%">Nama </th>
                 <th width="20%">Tanggal</th>
                 <th width="20%">Harga</th>
-                <th width="20%">DP</th>
+            
                 <th width="20%">Total</th>
             </tr>
         </thead>
@@ -144,7 +144,7 @@
                 <td>{{ $pembayaran->pemesanan->user->name }}</td>
                 <td class="text-center">{{ \Carbon\Carbon::parse($pembayaran->created_at)->format('d/m/Y') }}</td>
                 <td class="text-right">Rp {{ number_format($pembayaran->pemesanan->harga, 0, ',', '.') }}</td>
-                <td class="text-right">Rp {{ number_format($pembayaran->dp, 0, ',', '.') }}</td>
+
                 <td class="text-right">Rp {{ number_format($pembayaran->pemesanan->total_harga, 0, ',', '.') }}</td>
             </tr>
             @empty

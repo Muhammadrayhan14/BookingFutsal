@@ -9,6 +9,7 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\InstrukturController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PromoController;
@@ -55,7 +56,27 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard Admin
     // -----------------------
     Route::middleware('role:admin')->group(function () {
-       
+
+        Route::get('/users/cetak-kartu/{id}', [UserController::class, 'cetakKartu'])->name('users.cetak-kartu');
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    
+        // Show create form
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        
+        // Store new user
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        
+        // Show single user
+        Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+        
+        // Show edit form
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        
+        // Update user
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        
+        // Delete user
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         
         Route::get('/admin/pembayaran/faktur-pelunasan/{id}', [PembayaranController::class, 'generatePelunasanInvoice'])
         ->name('admin.pembayaran.faktur-pelunasan');

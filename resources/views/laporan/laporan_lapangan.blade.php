@@ -20,13 +20,13 @@
                     <!-- Table Header with Grass-like Accent -->
                     <thead style="background: linear-gradient(to right, #ff9800, #ff8c00); color: white;">
                         <tr>
-                            <th style="border-top-left-radius: 10px;">No</th>
+                     
                             <th>ID</th>
                             <th>Nama Lapangan</th>
                             <th>Harga</th>
                             <th>Gambar</th>
                             <th>Keterangan</th>
-                            <th style="border-top-right-radius: 10px;">Jumlah Pemesanan</th>
+                           
                         </tr>
                     </thead>
                     
@@ -34,7 +34,7 @@
                     <tbody>
                         @forelse($lapangans as $index => $lapangan)
                         <tr style="background-color: {{ $loop->odd ? '#fff' : '#ffeedb' }};">
-                            <td>{{ $index + 1 }}</td>
+                         
                             <td>{{ $lapangan->id }}</td>
                             <td>
                                 <strong>{{ $lapangan->nama_lapangan }}</strong>
@@ -48,11 +48,7 @@
                                 @endif
                             </td>
                             <td>{{ $lapangan->keterangan ?? '-' }}</td>
-                            <td>
-                                <span class="badge" style="background-color: #ff7043; color: white; padding: 5px 10px; border-radius: 10px;">
-                                    {{ $lapangan->pemesanan->count() }}
-                                </span>
-                            </td>
+                          
                         </tr>
                         @empty
                         <tr>

@@ -150,7 +150,7 @@
     <table>
         <thead>
             <tr>
-                <th width="5%">No</th>
+              
                 <th width="15%">ID User</th>
                 <th width="25%">Nama</th>
                 <th width="25%">Email</th>
@@ -161,7 +161,7 @@
         <tbody>
             @forelse ($users as $i => $user)
             <tr>
-                <td class="text-center">{{ $i + 1 }}</td>
+              
                 <td>{{ $user->id }}</td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>

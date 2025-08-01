@@ -74,7 +74,8 @@ class LaporanController extends Controller
                  ->setOptions([
                      'isHtml5ParserEnabled' => true,
                      'isRemoteEnabled' => true,
-                     'defaultFont' => 'Arial'
+                     'defaultFont' => 'Arial',
+                     'chroot' => public_path() // Tambahkan ini untuk mengizinkan akses ke direktori public
                  ]);
     
         return $pdf->download('laporan-data-lapangan-' . now()->format('Ymd') . '.pdf');
@@ -83,40 +84,29 @@ class LaporanController extends Controller
 
     public function laporanPemesanan(Request $request)
     {
-        // Inisialisasi variabel dengan koleksi kosong
         $pemesanans = collect();
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $selectedDate = $request->input('selected_date');
         
-        // Hanya query data jika filter tanggal diisi
-        if ($request->filled('start_date') && $request->filled('end_date')) {
+        if ($request->filled('selected_date')) {
             $pemesanans = Pemesanan::with(['user', 'lapangan'])
-                ->whereBetween('tanggal', [$startDate, $endDate])
-                ->orderBy('tanggal', 'desc')
+                ->whereDate('tanggal', $selectedDate)
                 ->orderBy('jam_mulai', 'desc')
                 ->get();
         }
             
-        return view('laporan.laporan_pemesanan', compact('pemesanans', 'startDate', 'endDate'));
+        return view('laporan.laporan_pemesanan', compact('pemesanans', 'selectedDate'));
     }
-
-    /**
-     * Export laporan pemesanan ke PDF
-     */
+    
     public function laporanPemesananPDF(Request $request)
     {
-        // Validasi bahwa tanggal harus diisi untuk export PDF
         $request->validate([
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date'
+            'selected_date' => 'required|date'
         ]);
         
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $selectedDate = $request->input('selected_date');
         
         $pemesanans = Pemesanan::with(['user', 'lapangan'])
-            ->whereBetween('tanggal', [$startDate, $endDate])
-            ->orderBy('tanggal', 'desc')
+            ->whereDate('tanggal', $selectedDate)
             ->orderBy('jam_mulai', 'desc')
             ->get();
             
@@ -124,12 +114,11 @@ class LaporanController extends Controller
         
         $data = [
             'pemesanans' => $pemesanans,
-            'startDate' => Carbon::parse($startDate)->format('d/m/Y'),
-            'endDate' => Carbon::parse($endDate)->format('d/m/Y'),
+            'selectedDate' => Carbon::parse($selectedDate)->format('d/m/Y'),
             'totalPendapatan' => $totalPendapatan,
             'tanggalCetak' => Carbon::now()->format('d F Y')
         ];
-
+    
         $pdf = Pdf::loadView('laporan.laporan_pemesanan_pdf', $data)
                  ->setPaper('a4', 'landscape')
                  ->setOptions([
@@ -137,7 +126,7 @@ class LaporanController extends Controller
                      'isRemoteEnabled' => true,
                      'defaultFont' => 'Arial'
                  ]);
-
+    
         return $pdf->download('laporan-pemesanan-' . now()->format('Ymd') . '.pdf');
     }
 
@@ -296,39 +285,31 @@ class LaporanController extends Controller
 
     public function laporanPembayaran(Request $request)
     {
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $selectedDate = $request->input('selected_date', Carbon::now()->format('Y-m-d'));
         
-        $pembayarans = collect();
-        
-        if ($request->filled('start_date') && $request->filled('end_date')) {
-            $pembayarans = Pembayaran::with(['pemesanan.user', 'pemesanan.lapangan'])
-                ->whereHas('pemesanan', function($query) use ($startDate, $endDate) {
-                    $query->whereBetween('tanggal', [$startDate, $endDate]);
-                })
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
+        $pembayarans = Pembayaran::with(['pemesanan.user', 'pemesanan.lapangan'])
+            ->whereHas('pemesanan', function($query) use ($selectedDate) {
+                $query->whereDate('tanggal', $selectedDate)
+                      ->where('status', 'Lunas'); // Ambil status dari pemesanan
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
             
-        return view('laporan.laporan_pembayaran', compact('pembayarans', 'startDate', 'endDate'));
+        return view('laporan.laporan_pembayaran', compact('pembayarans', 'selectedDate'));
     }
-
-    /**
-     * Export laporan pembayaran ke PDF
-     */
+    
     public function exportPembayaranPDF(Request $request)
     {
         $request->validate([
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date'
+            'selected_date' => 'required|date'
         ]);
         
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $selectedDate = $request->input('selected_date');
         
         $pembayarans = Pembayaran::with(['pemesanan.user', 'pemesanan.lapangan'])
-            ->whereHas('pemesanan', function($query) use ($startDate, $endDate) {
-                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            ->whereHas('pemesanan', function($query) use ($selectedDate) {
+                $query->whereDate('tanggal', $selectedDate)
+                      ->where('status', 'Lunas'); // Ambil status dari pemesanan
             })
             ->orderBy('created_at', 'desc')
             ->get();
@@ -340,13 +321,12 @@ class LaporanController extends Controller
         
         $data = [
             'pembayarans' => $pembayarans,
-            'startDate' => Carbon::parse($startDate)->format('d/m/Y'),
-            'endDate' => Carbon::parse($endDate)->format('d/m/Y'),
+            'selectedDate' => Carbon::parse($selectedDate)->format('d/m/Y'),
             'totalDP' => $totalDP,
             'totalPendapatan' => $totalPendapatan,
             'tanggalCetak' => Carbon::now()->format('d F Y')
         ];
-
+    
         $pdf = Pdf::loadView('laporan.laporan_pembayaran_pdf', $data)
                  ->setPaper('a4', 'landscape')
                  ->setOptions([
@@ -354,7 +334,7 @@ class LaporanController extends Controller
                      'isRemoteEnabled' => true,
                      'defaultFont' => 'Arial'
                  ]);
-
+    
         return $pdf->download('laporan-pembayaran-' . now()->format('Ymd') . '.pdf');
     }
 
@@ -366,6 +346,9 @@ class LaporanController extends Controller
         
         if ($request->filled('bulan') && $request->filled('tahun')) {
             $pembayarans = Pembayaran::with(['pemesanan.user'])
+                ->whereHas('pemesanan', function($query) {
+                    $query->where('status', 'Lunas'); // Filter status dari tabel pemesanan
+                })
                 ->whereMonth('created_at', (int)$bulan)
                 ->whereYear('created_at', (int)$tahun)
                 ->orderBy('created_at', 'desc')
@@ -386,6 +369,9 @@ class LaporanController extends Controller
         $tahun = (int)$request->input('tahun');
         
         $pembayarans = Pembayaran::with(['pemesanan.user'])
+            ->whereHas('pemesanan', function($query) {
+                $query->where('status', 'Lunas'); // Filter status dari tabel pemesanan
+            })
             ->whereMonth('created_at', $bulan)
             ->whereYear('created_at', $tahun)
             ->orderBy('created_at', 'desc')

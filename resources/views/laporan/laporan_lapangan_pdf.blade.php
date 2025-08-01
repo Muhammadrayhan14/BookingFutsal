@@ -70,8 +70,8 @@
             text-align: left; 
         }
         th { 
-            background-color: #ffffff; 
-            color: rgb(0, 0, 0); 
+            background-color: #f2f2f2; 
+            color: #333; 
             font-weight: bold;
             text-align: center;
         }
@@ -89,8 +89,10 @@
         
         /* IMAGE STYLES */
         .lapangan-image {
-            max-width: 60px;
-            max-height: 40px;
+            max-width: 80px;
+            max-height: 60px;
+            display: block;
+            margin: 0 auto;
         }
         
         /* FOOTER STYLES */
@@ -120,9 +122,8 @@
     <!-- HEADER SECTION -->
     <div class="header">
         <div class="header-text">
-            <h1>ANAK RAWA FUTSAL </h1>
+            <h1>ANAK RAWA FUTSAL</h1>
             <p>KAMPUNG PENYENGAT</p>
-          
         </div>
     </div>
     
@@ -131,8 +132,7 @@
     
     <!-- REPORT INFO -->
     <div class="report-info">
-        <p>Tanggal: {{ $tanggal }}</p>
-      
+    
     </div>
     
     <!-- MAIN TABLE -->
@@ -140,28 +140,41 @@
         <thead>
             <tr>
                
-                <th width="10%">ID Lapangan</th>
-                <th width="20%">Nama Lapangan</th>
-                <th width="15%">Harga</th>
-                <th width="15%">Gambar</th>
-                <th width="40%">Keterangan</th>
-               
+                <th width="15%">ID Lapangan</th>
+                <th width="25%">Nama Lapangan</th>
+                <th width="25%">Harga</th>
+                <th width="30%">Gambar</th>
+                <th width="20%">Keterangan</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($lapangans as $i => $lapangan)
+            @forelse ($lapangans as $index => $lapangan)
             <tr>
-                <td class="text-center">{{ $i + 1 }}</td>
+               
                 <td class="text-center">{{ $lapangan->id }}</td>
                 <td>{{ $lapangan->nama_lapangan }}</td>
-                <td class="text-right">Rp {{ number_format($lapangan->harga, 0, ',', '.') }}</td>
-               
+                <td>{{ $lapangan->harga }}</td>
+                <td class="text-center">
+                    @if($lapangan->gambar)
+                        @php
+                            $imagePath = public_path('storage/' . $lapangan->gambar);
+                            if(file_exists($imagePath)) {
+                                $imageData = base64_encode(file_get_contents($imagePath));
+                                $src = 'data:image/'.pathinfo($imagePath, PATHINFO_EXTENSION).';base64,'.$imageData;
+                                echo '<img src="'.$src.'" class="lapangan-image">';
+                            } else {
+                                echo '<span>Gambar tidak ditemukan</span>';
+                            }
+                        @endphp
+                    @else
+                        -
+                    @endif
+                </td>
                 <td>{{ $lapangan->keterangan ?? '-' }}</td>
-               
             </tr>
             @empty
             <tr>
-                <td colspan="7" class="no-data">Tidak ada data lapangan</td>
+                <td colspan="5" class="no-data">Tidak ada data lapangan</td>
             </tr>
             @endforelse
         </tbody>

@@ -66,12 +66,13 @@
                 <table class="table table-hover" width="100%" cellspacing="0" style="border-radius: 10px; overflow: hidden;">
                     <thead style="background: linear-gradient(to right, #ff9800, #ff8c00); color: white;">
                         <tr>
-                            <th style="width:10%; border-top-left-radius: 10px;">ID</th>
-                            <th style="width:25%">Nama Pelanggan</th>
-                            <th style="width:20%">Tanggal Bayar</th>
-                            <th style="width:15%">DP</th>
+                            <th style="width:10%; border-top-left-radius: 10px;">ID Pembayaran</th>
+                            <th style="width:25%">Nama </th>
+                            <th style="width:20%">Tanggal </th>
+                            <th style="width:20%">Harga </th>
+                      
                             <th style="width:15%">Total</th>
-                            <th style="width:15%; border-top-right-radius: 10px;">Status</th>
+                    
                         </tr>
                     </thead>
                     <tbody>
@@ -84,11 +85,7 @@
                             <td class="text-right" style="font-weight: bold; color: #e65100;">
                                 Rp {{ number_format($pembayaran->pemesanan->total_harga, 0, ',', '.') }}
                             </td>
-                            <td class="text-center">
-                                <span class="badge" style="background-color: {{ $pembayaran->pemesanan->status == 'selesai' ? '#28a745' : '#ffc107' }}; color: white; padding: 5px 10px; border-radius: 10px;">
-                                    {{ ucfirst($pembayaran->pemesanan->status) }}
-                                </span>
-                            </td>
+                           
                         </tr>
                         @empty
                         <tr>
@@ -98,16 +95,7 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    @if($pembayarans->count() > 0)
-                    <tfoot>
-                        <tr style="background-color: #ffcc80;">
-                            <th colspan="3" class="text-right">Total:</th>
-                            <th class="text-right">Rp {{ number_format($pembayarans->sum('dp'), 0, ',', '.') }}</th>
-                            <th class="text-right" style="color: #e65100;">Rp {{ number_format($pembayarans->sum(function($p) { return $p->pemesanan->total_harga; }), 0, ',', '.') }}</th>
-                            <th></th>
-                        </tr>
-                    </tfoot>
-                    @endif
+                 
                 </table>
             </div>
             @endif

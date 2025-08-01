@@ -50,20 +50,22 @@
                     <thead style="background: linear-gradient(to right, #ff9800, #ff8c00); color: white;">
                         <tr>
                             <th style="border-top-left-radius: 10px;">ID Pemesanan</th>
+                           
+                            <th>Nama </th>
                             <th>Tanggal</th>
-                            <th>Nama Pelanggan</th>
-                            <th>Harga/jam</th>
+                            <th>Harga</th>
                             <th>DP</th>
-                            <th>Lama (jam)</th>
-                            <th style="border-top-right-radius: 10px;">Total Harga</th>
+                            <th>Lama </th>
+                            <th style="border-top-right-radius: 10px;">Total </th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($pemesanans as $pemesanan)
                         <tr style="background-color: {{ $loop->odd ? '#fff' : '#ffeedb' }};">
                             <td>{{ $pemesanan->id }}</td>
-                            <td>{{ \Carbon\Carbon::parse($pemesanan->tanggal)->format('d/m/Y') }}</td>
+                          
                             <td>{{ $pemesanan->user->name }}</td>
+                            <td>{{ \Carbon\Carbon::parse($pemesanan->tanggal)->format('d/m/Y') }}</td>
                             <td>Rp {{ number_format($pemesanan->harga, 0, ',', '.') }}</td>
                             <td>
                                 @if($pemesanan->pembayaran)

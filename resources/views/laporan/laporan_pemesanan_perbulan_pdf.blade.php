@@ -124,13 +124,13 @@
     
     <!-- REPORT TITLE -->
     <h3 class="text-center" style="margin: 0 0 20px 0; font-size: 16px; color: #333; text-transform: uppercase;">
-        LAPORAN PEMESANAN BULANAN
+        LAPORAN PEMESANAN PERBULAN
     </h3>
     
     <!-- REPORT INFO -->
     <div class="report-info">
         <p>
-            <strong>Bulan:</strong> {{ $bulan }} &nbsp;&nbsp;
+            <strong>Bulan:</strong> {{ \Carbon\Carbon::parse($bulan)->translatedFormat('F') }}
             <strong>Tahun:</strong> {{ date('Y') }}
         </p>
     </div>
@@ -141,9 +141,10 @@
         <thead>
             <tr>
                 <th width="5%">ID</th>
+               
+                <th width="20%">Nama </th>
                 <th width="10%">Tanggal</th>
-                <th width="20%">Nama Pelanggan</th>
-                <th width="15%">Harga/jam</th>
+                <th width="15%">Harga</th>
                 <th width="15%">DP</th>
                 <th width="10%">Lama</th>
                 <th width="15%">Total</th>
@@ -153,8 +154,9 @@
             @forelse ($pemesanans as $pemesanan)
             <tr>
                 <td class="text-center">{{ $pemesanan->id }}</td>
-                <td>{{ \Carbon\Carbon::parse($pemesanan->tanggal)->format('d/m/Y') }}</td>
+               
                 <td>{{ $pemesanan->user->name }}</td>
+                 <td>{{ \Carbon\Carbon::parse($pemesanan->tanggal)->format('d/m/Y') }}</td>
                 <td class="text-right">Rp {{ number_format($pemesanan->harga, 0, ',', '.') }}</td>
                 <td class="text-right">
                     @if($pemesanan->pembayaran)

@@ -111,63 +111,55 @@
     </style>
 </head>
 <body>
-    <!-- HEADER SECTION -->
     <div class="header">
-        
         <div class="header-text">
-            <h1>ANAK RAWA FUTSAL </h1>
+            <h1>ANAK RAWA FUTSAL</h1>
             <p>KAMPUNG PENYENGAT</p>
-  
         </div>
     </div>
     
-    <!-- REPORT TITLE -->
     <h3 class="text-center" style="margin: 0 0 20px 0; font-size: 16px; color: #333; text-transform: uppercase;">
-        LAPORAN PEMESANAN LAPANGAN
+        LAPORAN DATA PEMESANAN PERTANGGAL
     </h3>
     
-    <!-- REPORT INFO -->
     <div class="report-info">
-        <p><strong>Tanggal:</strong> {{ $startDate }} s/d {{ $endDate }}</p>
-      
+        <p><strong>Tanggal:</strong> {{ $selectedDate }}</p>
+       
     </div>
     
-    <!-- MAIN TABLE -->
     <table>
         <thead>
             <tr>
-                <th width="5%">ID Pemesanan</th>
-                <th width="15%">Nama </th>
-                <th width="10%">Harga</th>
-                <th width="10%">Dp</th>
+                <th width="5%">Id Pemesanan</th>
+               
+                <th width="20%">Nama</th>
+           
+                <th width="15%">Harga</th>
+                <th width="10%">DP</th>
                 <th width="5%">Lama</th>
-                <th width="10%">Total</th>
-              
+                <th width="15%">Total</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($pemesanans as $pemesanan)
             <tr>
                 <td class="text-center">{{ $pemesanan->id }}</td>
-               
-                <td>{{ $pemesanan->user->name }}</td>
-                <td class="text-right">Rp {{ number_format($pemesanan->harga, 0, ',', '.') }}</td>
-                <td>Rp {{ number_format($pemesanan->pembayaran->dp ?? 0, 0, ',', '.') }}</td>
              
+                <td>{{ $pemesanan->user->name }}</td>
+     
+                <td class="text-right">Rp {{ number_format($pemesanan->harga, 0, ',', '.') }}</td>
+                <td class="text-right">Rp {{ number_format($pemesanan->pembayaran->dp ?? 0, 0, ',', '.') }}</td>
                 <td class="text-center">{{ $pemesanan->lama }} jam</td>
-               
                 <td class="text-right">Rp {{ number_format($pemesanan->total_harga, 0, ',', '.') }}</td>
-           
             </tr>
             @empty
             <tr>
-                <td colspan="9" class="text-center">Tidak ada data pemesanan</td>
+                <td colspan="8" class="text-center">Tidak ada data pemesanan</td>
             </tr>
             @endforelse
         </tbody>
     </table>
     
-    <!-- FOOTER SECTION -->
     <div class="footer">
         <div class="signature">
             <p>Padang, {{ $tanggalCetak }}</p>
@@ -177,7 +169,6 @@
                 <p>Pemilik</p>
             </div>
         </div>
-        <div style="clear: both;"></div>
     </div>
 </body>
 </html>

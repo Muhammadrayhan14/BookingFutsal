@@ -68,6 +68,17 @@
             </li>
 
             <li class="sidebar-nav-item mb-2">
+              <a href="{{ route('users.index') }}" class="sidebar-nav-link text-muted px-3 py-3 d-flex align-items-center position-relative">
+                <div class="sidebar-nav-icon me-3 p-2 rounded-3" style="background: linear-gradient(135deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%);">
+                  <i class="fas fa-tachometer-alt" style="color: #ff6600;"></i>
+                </div>
+                <span class="sidebar-nav-text fs-6">Data User</span>
+                <span class="badge bg-primary ms-auto fs-7" style="background: rgba(255, 102, 0, 0.1) !important; color: #ff6600;">3</span>
+                <div class="nav-highlight" style="background: linear-gradient(90deg, #ff6600, #ff9933);"></div>
+              </a>
+            </li>
+
+            <li class="sidebar-nav-item mb-2">
               <a href="{{ route('lapangan.index') }}" class="sidebar-nav-link text-muted px-3 py-3 d-flex align-items-center position-relative">
                 <div class="sidebar-nav-icon me-3 p-2 rounded-3" style="background: linear-gradient(135deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%);">
                   <i class="fas fa-tachometer-alt" style="color: #ff6600;"></i>
