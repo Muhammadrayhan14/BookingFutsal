@@ -69,7 +69,7 @@
                     </tbody>
                     <tfoot>
                         <tr style="background-color: #ffcc80;">
-                            <th class="text-right">Total:</th>
+                            <th class="text-right">Total Seluruhnya:</th>
                             <th class="text-center">{{ $allMonthsData->sum('jumlah_pemesanan') }}</th>
                             <th class="text-right" style="color: #e65100;">Rp {{ number_format($allMonthsData->sum('total_pendapatan'), 0, ',', '.') }}</th>
                         </tr>
