@@ -60,10 +60,16 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $totalHarga = 0;
+                            $totalDP = 0;
+                            $totalSisa = 0;
+                            $totalJam = 0;
+                        @endphp
+                        
                         @forelse($pemesanans as $pemesanan)
                         <tr style="background-color: {{ $loop->odd ? '#fff' : '#ffeedb' }};">
                             <td>{{ $pemesanan->id }}</td>
-                          
                             <td>{{ $pemesanan->user->name }}</td>
                             <td>{{ \Carbon\Carbon::parse($pemesanan->tanggal)->format('d/m/Y') }}</td>
                             <td>Rp {{ number_format($pemesanan->harga, 0, ',', '.') }}</td>
@@ -79,6 +85,12 @@
                                 Rp {{ number_format($pemesanan->total_harga, 0, ',', '.') }}
                             </td>
                         </tr>
+                        @php
+                            $totalHarga += $pemesanan->total_harga;
+                            $totalDP += $pemesanan->pembayaran ? $pemesanan->pembayaran->dp : 0;
+                            $totalSisa += $pemesanan->total_harga - ($pemesanan->pembayaran ? $pemesanan->pembayaran->dp : 0);
+                            $totalJam += $pemesanan->lama;
+                        @endphp
                         @empty
                         <tr>
                             <td colspan="7" class="text-center py-4" style="background-color: #ffeedb;">
@@ -86,6 +98,19 @@
                             </td>
                         </tr>
                         @endforelse
+                        
+                        @if($pemesanans->count() > 0)
+                        <tr style="background-color: #fff2e6; font-weight: bold;">
+                            <td colspan="2">Total Seluruhnya</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="color: #e65100;">
+                                Rp {{ number_format($totalHarga, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>

@@ -144,7 +144,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <th class="text-right">Total:</th>
+                <th class="text-left">Total Seluruhnya:</th>
                
                 <th class="text-right">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</th>
             </tr>

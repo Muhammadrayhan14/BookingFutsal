@@ -105,17 +105,23 @@ class LaporanController extends Controller
         
         $selectedDate = $request->input('selected_date');
         
-        $pemesanans = Pemesanan::with(['user', 'lapangan'])
+        $pemesanans = Pemesanan::with(['user', 'lapangan', 'pembayaran'])
             ->whereDate('tanggal', $selectedDate)
             ->orderBy('jam_mulai', 'desc')
             ->get();
             
-        $totalPendapatan = $pemesanans->sum('total_harga');
+        $totalHarga = $pemesanans->sum('total_harga');
+        $totalDP = $pemesanans->sum(function($pemesanan) {
+            return $pemesanan->pembayaran->dp ?? 0;
+        });
+        $totalSisa = $totalHarga - $totalDP;
         
         $data = [
             'pemesanans' => $pemesanans,
             'selectedDate' => Carbon::parse($selectedDate)->format('d/m/Y'),
-            'totalPendapatan' => $totalPendapatan,
+            'totalHarga' => $totalHarga,
+            'totalDP' => $totalDP,
+            'totalSisa' => $totalSisa,
             'tanggalCetak' => Carbon::now()->format('d F Y')
         ];
     
@@ -170,19 +176,25 @@ class LaporanController extends Controller
             ->orderBy('jam_mulai', 'desc')
             ->get();
             
-        $totalPendapatan = $pemesanans->sum('total_harga');
+        $totalHarga = $pemesanans->sum('total_harga');
         $totalDP = $pemesanans->sum(function($pemesanan) {
-            return $pemesanan->pembayaran ? $pemesanan->pembayaran->jumlah_dp : 0;
+            return $pemesanan->pembayaran ? $pemesanan->pembayaran->dp : 0;
         });
+        $totalSisa = $totalHarga - $totalDP;
+        $totalJam = $pemesanans->sum('lama');
         
         $data = [
             'pemesanans' => $pemesanans,
-            'bulan' => Carbon::parse($bulan)->format('F Y'),
-            'totalPendapatan' => $totalPendapatan,
+            'bulan' => $bulan,
+            'namaBulan' => Carbon::parse($bulan)->translatedFormat('F Y'),
+            'totalHarga' => $totalHarga,
             'totalDP' => $totalDP,
+            'totalSisa' => $totalSisa,
+            'totalJam' => $totalJam,
+            'jumlahTransaksi' => $pemesanans->count(),
             'tanggalCetak' => Carbon::now()->format('d F Y')
         ];
-
+    
         $pdf = Pdf::loadView('laporan.laporan_pemesanan_perbulan_pdf', $data)
                  ->setPaper('a4', 'landscape')
                  ->setOptions([
@@ -190,7 +202,7 @@ class LaporanController extends Controller
                      'isRemoteEnabled' => true,
                      'defaultFont' => 'Arial'
                  ]);
-
+    
         return $pdf->download('laporan-pemesanan-perbulan-' . $bulan . '.pdf');
     }
 
@@ -309,12 +321,11 @@ class LaporanController extends Controller
         $pembayarans = Pembayaran::with(['pemesanan.user', 'pemesanan.lapangan'])
             ->whereHas('pemesanan', function($query) use ($selectedDate) {
                 $query->whereDate('tanggal', $selectedDate)
-                      ->where('status', 'Lunas'); // Ambil status dari pemesanan
+                      ->where('status', 'Lunas');
             })
             ->orderBy('created_at', 'desc')
             ->get();
             
-        $totalDP = $pembayarans->sum('dp');
         $totalPendapatan = $pembayarans->sum(function($pembayaran) {
             return $pembayaran->pemesanan->total_harga;
         });
@@ -322,7 +333,6 @@ class LaporanController extends Controller
         $data = [
             'pembayarans' => $pembayarans,
             'selectedDate' => Carbon::parse($selectedDate)->format('d/m/Y'),
-            'totalDP' => $totalDP,
             'totalPendapatan' => $totalPendapatan,
             'tanggalCetak' => Carbon::now()->format('d F Y')
         ];

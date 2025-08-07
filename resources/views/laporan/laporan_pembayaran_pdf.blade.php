@@ -132,20 +132,34 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $totalPendapatan = 0;
+            @endphp
+            
             @forelse ($pembayarans as $pembayaran)
             <tr>
                 <td class="text-center">{{ $pembayaran->id }}</td>
                 <td>{{ $pembayaran->pemesanan->user->name }}</td>
-                <td>{{ $pembayaran->pemesanan->harga }}</td>
-               
-               
+                <td class="text-right">Rp {{ number_format($pembayaran->pemesanan->harga, 0, ',', '.') }}</td>
                 <td class="text-right">Rp {{ number_format($pembayaran->pemesanan->total_harga, 0, ',', '.') }}</td>
             </tr>
+            @php
+                $totalPendapatan += $pembayaran->pemesanan->total_harga;
+            @endphp
             @empty
             <tr>
                 <td colspan="6" class="text-center">Tidak ada data pembayaran untuk tanggal ini</td>
             </tr>
             @endforelse
+            
+            @if($pembayarans->count() > 0)
+            <tr style="font-weight: bold; background-color: #f5f5f5;">
+                <td colspan="3" class="text-left">Total Seluruhnya:</td>
+                <td class="text-right" style="color: #e65100;">
+                    Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
+                </td>
+            </tr>
+            @endif
         </tbody>
     </table>
     

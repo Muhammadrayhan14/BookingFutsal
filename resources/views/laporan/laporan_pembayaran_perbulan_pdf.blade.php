@@ -138,20 +138,35 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $totalPendapatan = 0;
+            @endphp
+            
             @forelse ($pembayarans as $pembayaran)
             <tr>
                 <td class="text-center">{{ $pembayaran->id }}</td>
                 <td>{{ $pembayaran->pemesanan->user->name }}</td>
                 <td class="text-center">{{ \Carbon\Carbon::parse($pembayaran->created_at)->format('d/m/Y') }}</td>
                 <td class="text-right">Rp {{ number_format($pembayaran->pemesanan->harga, 0, ',', '.') }}</td>
-
                 <td class="text-right">Rp {{ number_format($pembayaran->pemesanan->total_harga, 0, ',', '.') }}</td>
             </tr>
+            @php
+                $totalPendapatan += $pembayaran->pemesanan->total_harga;
+            @endphp
             @empty
             <tr>
                 <td colspan="5" class="text-center">Tidak ada data pembayaran untuk bulan ini</td>
             </tr>
             @endforelse
+            
+            @if($pembayarans->count() > 0)
+            <tr style="font-weight: bold; background-color: #f5f5f5;">
+                <td colspan="4" class="text-left">Total Seluruhnya:</td>
+                <td class="text-right" style="color: #e65100;">
+                    Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
+                </td>
+            </tr>
+            @endif
         </tbody>
        
     </table>

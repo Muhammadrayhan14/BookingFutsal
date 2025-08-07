@@ -95,6 +95,14 @@
             </tr>
             @endforeach
         </tbody>
+        <tfoot>
+            <tr style="background-color: #f5f5f5; font-weight: bold;">
+                <td>Total Seluruhnya {{ $tahun }}</td>
+                <td class="text-right" style="color: #e65100;">
+                    Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
+                </td>
+            </tr>
+        </tfoot>
        
     </table>
     

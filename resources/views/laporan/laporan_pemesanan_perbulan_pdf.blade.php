@@ -109,6 +109,11 @@
             background-color: #f5f5f5;
             border: 1px solid #ddd;
         }
+
+        .total-row td {
+    padding-left: 0 !important;
+}
+
     </style>
 </head>
 <body>
@@ -173,6 +178,12 @@
                 <td colspan="7" class="text-center">Tidak ada data pemesanan untuk bulan ini</td>
             </tr>
             @endforelse
+            @if($pemesanans->count() > 0)
+            <tr class="total-row">
+                <td colspan="6" class="text-left">Total Seluruhnya:</td>
+                <td class="text-right highlight">Rp {{ number_format($totalHarga, 0, ',', '.') }}</td>
+            </tr>
+            @endif
         </tbody>
    
     </table>

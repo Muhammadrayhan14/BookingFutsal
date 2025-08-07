@@ -76,6 +76,10 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $totalPendapatan = 0;
+                        @endphp
+                        
                         @forelse($pembayarans as $pembayaran)
                         <tr style="background-color: {{ $loop->odd ? '#fff' : '#ffeedb' }};">
                             <td>{{ $pembayaran->id }}</td>
@@ -85,8 +89,10 @@
                             <td class="text-right" style="font-weight: bold; color: #e65100;">
                                 Rp {{ number_format($pembayaran->pemesanan->total_harga, 0, ',', '.') }}
                             </td>
-                           
                         </tr>
+                        @php
+                            $totalPendapatan += $pembayaran->pemesanan->total_harga;
+                        @endphp
                         @empty
                         <tr>
                             <td colspan="6" class="text-center py-4" style="background-color: #ffeedb;">
@@ -94,6 +100,15 @@
                             </td>
                         </tr>
                         @endforelse
+                        
+                        @if($pembayarans->count() > 0)
+                        <tr style="background-color: #fff2e6; font-weight: bold;">
+                            <td colspan="4" style="border-bottom-left-radius: 10px;">Total Seluruhnya</td>
+                            <td class="text-right" style="border-bottom-right-radius: 10px; color: #e65100;">
+                                Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                        @endif
                     </tbody>
                  
                 </table>

@@ -108,6 +108,11 @@
             background-color: #ffc107;
             color: black;
         }
+        .total-row td:not(:first-child):not(:last-child) {
+    border-left: none !important;
+    border-right: none !important;
+}
+
     </style>
 </head>
 <body>
@@ -157,6 +162,13 @@
                 <td colspan="8" class="text-center">Tidak ada data pemesanan</td>
             </tr>
             @endforelse
+
+            @if($pemesanans->count() > 0)
+            <tr class="total-row">
+                <td colspan="5" class="text-left">Total Seluruhnya:</td>
+                <td class="text-right highlight">Rp {{ number_format($totalHarga, 0, ',', '.') }}</td>
+            </tr>
+            @endif
         </tbody>
     </table>
     
