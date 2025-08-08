@@ -9,7 +9,7 @@
         <h1 class="display-4 fw-bold mb-3 text-light">Booking Lapangan Futsal Online</h1>
         <p class="lead mb-4">Nikmati kemudahan booking lapangan futsal kapan saja, di mana saja. Fasilitas terbaik dengan harga terjangkau.</p>
         <div class="d-flex gap-3">
-          <a href="#booking" class="btn btn-primary btn-lg px-4">Booking Sekarang</a>
+          <a href="{{ route('login') }}" class="btn btn-primary btn-lg px-4">Booking Sekarang</a>
         </div>
       </div>
       <div class="col-lg-6" data-aos="fade-left">
